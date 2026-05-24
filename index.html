@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MEDIA </title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- ARTICLE DETAIL VIEW MODAL -->
+  <div class="admin-overlay" id="articleDetailModal">
+    <div class="admin-modal" style="max-width: 800px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 id="detailTitle" style="margin: 0;"></h2>
+        <button class="btn btn-secondary" onclick="closeDetailModal()" style="padding: 8px 12px; gap: 0;">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="detailContent" style="margin: 20px 0; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 10px; max-height: 500px; overflow-y: auto;"></div>
+      <div class="button-group">
+        <button class="btn btn-primary" onclick="downloadArticle()">
+          <i class="fas fa-download"></i> Download
+        </button>
+        <button class="btn btn-secondary" onclick="closeDetailModal()">
+          <i class="fas fa-times"></i> Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEDIA PLAYER MODAL -->
+  <div class="admin-overlay" id="mediaPlayerModal">
+    <div class="admin-modal media-modal">
+      <div class="modal-header">
+        <div>
+          <span id="mediaTypeLabel" class="card-type">Media</span>
+          <h2 id="mediaTitle"></h2>
+        </div>
+        <button class="btn btn-secondary icon-button" onclick="closeMediaPlayer()" aria-label="Close player">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="mediaPlayerContent" class="media-player-content"></div>
+      <div id="mediaDescription" class="media-description"></div>
+    </div>
+  </div>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <a href="index.html" class="site-brand" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; cursor: pointer;">
+        <i class="fas fa-newspaper"></i>
+        <span>MEDIA</span>
+      </a>
+    </div>
+    <div class="header-right">
+      <a href="home.html" class="nav-link" title="View alternate layout">
+        <i class="fas fa-th-large"></i> Home View
+      </a>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <div class="container">
+
+    <!-- HERO SECTION -->
+    <div class="hero-section">
+      <h1>Welcome to the SRC MEDIA BROADCAST</h1>
+      <p>Your gateway to quality content - Articles, Images, Videos & Podcasts of BLUECREST</p>
+    </div>
+
+    <!-- LIVE STREAMING SECTION -->
+    <section class="live-section" id="liveSection">
+      <div class="section-title live-title">
+        <i class="fas fa-broadcast-tower"></i> Live Now
+      </div>
+      <div class="live-frame-row" id="liveFrameRow"></div>
+    </section>
+
+    <!-- SEARCH & FILTERS -->
+    <div class="search-panel">
+      <div class="form-group">
+        <label>Search</label>
+        <input type="text" id="contentSearch" placeholder="Search titles, authors, categories, or keywords" oninput="renderAllSections()">
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="categoryFilter" onchange="renderAllSections()"></select>
+      </div>
+      <div class="form-group">
+        <label>Keyword</label>
+        <select id="keywordFilter" onchange="renderAllSections()"></select>
+      </div>
+    </div>
+
+    <!-- HOME SECTION - Featured & Articles -->
+    <div id="home" class="section active">
+      <div class="section-title">
+        <i class="fas fa-star"></i> Featured & Articles
+      </div>
+      
+      <!-- RECENT ACTIVITY SECTION -->
+      <div style="margin-bottom: 40px;">
+        <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 15px; color: var(--accent);"><i class="fas fa-bolt"></i> Recent Activity</h3>
+        <div id="activityFeed" style="display: grid; gap: 12px;"></div>
+      </div>
+      
+      <div class="content-grid" id="homeGrid"></div>
+    </div>
+
+    <!-- REELS SECTION - Images & Videos -->
+    <div id="reels" class="section">
+      <div class="section-title">
+        <i class="fas fa-film"></i> Reels & Media
+      </div>
+      <div class="content-grid" id="reelsGrid"></div>
+    </div>
+
+    <!-- PODCASTS SECTION -->
+    <div id="podcasts" class="section">
+      <div class="section-title">
+        <i class="fas fa-microphone"></i> Podcasts & Audio
+      </div>
+      <div class="content-grid" id="podcastsGrid"></div>
+    </div>
+
+    <!-- HISTORY SECTION - All Content -->
+    <div id="history" class="section">
+      <div class="section-title">
+        <i class="fas fa-history"></i> All Content
+      </div>
+      
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Filter by Date</label>
+        <input type="date" id="dateFilter" onchange="filterByDate(this.value)">
+      </div>
+
+      <div class="content-grid" id="historyGrid"></div>
+    </div>
+
+  </div>
+
+  <!-- NAVIGATION TABS - BOTTOM -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('home')">
+      <i class="fas fa-home"></i> Home
+    </button>
+    <button class="nav-tab" onclick="showSection('reels')">
+      <i class="fas fa-film"></i> Reels
+    </button>
+    <button class="nav-tab" onclick="showSection('podcasts')">
+      <i class="fas fa-microphone"></i> Podcasts
+    </button>
+    <button class="nav-tab" onclick="showSection('history')">
+      <i class="fas fa-history"></i> History
+    </button>
+  </div>
+
+  <!-- JavaScript Files -->
+  <script src="js/config.js"></script>
+  <script src="js/taxonomy.js"></script>
+  <script src="js/helpers.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/preview.js"></script>
+  <script src="js/app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const supabaseUrl = 'https://supabase.com/dashboard/project/ruqqqtlnbbeadypllpdi/settings/api-keys/legacy'
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+
+  const client = supabase.createClient(supabaseUrl, supabaseKey)
+
+  async function loadPosts() {
+    const { data, error } = await client
+      .from('posts')
+      .select('*')
+
+    console.log("DATA:", data)
+    console.log("ERROR:", error)
+
+    const container = document.getElementById('posts')
+
+    if (!container) {
+      console.error("Add <div id='posts'></div> in your HTML")
+      return
+    }
+
+    data.forEach(post => {
+      const div = document.createElement('div')
+      div.innerHTML = `<h2>${post.title}</h2><p>${post.content}</p>`
+      container.appendChild(div)
+    })
+  }
+
+  loadPosts()
+</script>
+</body>
+
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MEDIA Admin</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="admin-page">
+  <div class="admin-overlay" id="adminOverlay">
+    <div class="admin-modal">
+      <h2><i class="fas fa-lock"></i> Admin Access</h2>
+      <p>Sign in to manage magazine content.</p>
+
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="adminUsername" placeholder="Enter admin username" autocomplete="username">
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="adminPassword" placeholder="Enter admin password" autocomplete="current-password">
+      </div>
+
+      <div class="button-group">
+        <button class="btn btn-primary" onclick="loginAdmin()">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+        <a class="btn btn-secondary" href="index.html">
+          <i class="fas fa-arrow-left"></i> Public Site
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-overlay" id="previewModal">
+    <div class="admin-modal" style="max-width: 700px;">
+      <h2><i class="fas fa-eye"></i> Preview Content</h2>
+      <div id="previewContent" style="margin: 20px 0; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 10px; max-height: 400px; overflow-y: auto;"></div>
+      <div class="button-group">
+        <button class="btn btn-primary" onclick="publishContent()">
+          <i class="fas fa-check"></i> Publish
+        </button>
+        <button class="btn btn-secondary" onclick="closePreviewModal()">
+          <i class="fas fa-times"></i> Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="header-left">
+      <span class="site-logo admin-logo" data-site-logo aria-hidden="true">BC</span>
+      <span>Admin</span>
+    </div>
+    <div class="header-right">
+      <a class="btn-admin" href="index.html">
+        <i class="fas fa-globe"></i> View Site
+      </a>
+      <button class="btn-admin" onclick="logoutAdmin()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero-section admin-hero">
+      <h1>Content Dashboard</h1>
+      <p>Create articles, publish reels, upload images, and add podcast episodes.</p>
+    </section>
+
+    <section class="admin-workspace" id="adminDashboard">
+      <aside class="admin-panel admin-sidebar">
+        <h2><i class="fas fa-compass"></i> Admin Navigation</h2>
+        <div class="admin-action-grid">
+          <button class="btn btn-primary" onclick="showAdminForm('text')">
+            <i class="fas fa-file-alt"></i> Add Text Article
+          </button>
+          <button class="btn btn-primary" onclick="showAdminForm('image')">
+            <i class="fas fa-image"></i> Add Picture
+          </button>
+          <button class="btn btn-primary" onclick="showAdminForm('video')">
+            <i class="fas fa-video"></i> Add Video/Reel
+          </button>
+          <button class="btn btn-primary" onclick="showAdminForm('podcast')">
+            <i class="fas fa-microphone"></i> Add Podcast
+          </button>
+          <button class="btn btn-primary" onclick="showAdminForm('live')">
+            <i class="fas fa-broadcast-tower"></i> Add Live Stream
+          </button>
+        </div>
+      </aside>
+
+      <div class="admin-panel admin-main-panel">
+        <h2><i class="fas fa-plus-circle"></i> Publish Content</h2>
+        <p>Choose an option from the left navigation to add magazine content.</p>
+        <div id="adminFormContainer" class="admin-form-panel">
+          <div id="formContent"></div>
+        </div>
+
+        <div class="admin-manage-panel">
+          <h2><i class="fas fa-list-check"></i> Manage Posts</h2>
+          <p>Delete posts that should no longer appear on the public site.</p>
+          <div id="adminPostList" class="admin-post-list"></div>
+        </div>
+      </div>
+
+      <div class="admin-side-stack">
+        <aside class="admin-panel">
+          <h2><i class="fas fa-image"></i> Logo Upload</h2>
+          <p>Upload a logo to show in the site header.</p>
+
+          <div class="logo-upload-panel">
+            <div class="logo-preview-box">
+              <span class="site-logo" id="adminLogoPreview" aria-hidden="true">BC</span>
+            </div>
+            <div class="form-group">
+              <label for="siteLogoFile">Logo Image</label>
+              <input type="file" id="siteLogoFile" accept="image/*" onchange="uploadSiteLogo(this)">
+              <small style="color: var(--text-light); display: block; margin-top: 8px;">Use a square PNG, JPG, or WebP for best results.</small>
+            </div>
+            <button class="btn btn-secondary" type="button" onclick="removeSiteLogo()">
+              <i class="fas fa-trash"></i> Remove Logo
+            </button>
+          </div>
+        </aside>
+
+        <aside class="admin-panel">
+          <h2><i class="fas fa-tags"></i> Categories & Keywords</h2>
+          <p>Add options admins must choose before publishing.</p>
+
+          <div class="taxonomy-manager">
+            <div class="form-group">
+              <label>Add Category</label>
+              <div class="inline-control">
+                <input type="text" id="newCategoryInput" placeholder="e.g., Business">
+                <button class="btn btn-primary" type="button" onclick="addCategory()">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <div class="taxonomy-list" id="categoryList"></div>
+            </div>
+
+            <div class="form-group">
+              <label>Add Tag / Keyword</label>
+              <div class="inline-control">
+                <input type="text" id="newKeywordInput" placeholder="e.g., Breaking">
+                <button class="btn btn-primary" type="button" onclick="addKeyword()">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <div class="taxonomy-list" id="keywordList"></div>
+            </div>
+          </div>
+        </aside>
+
+        <aside class="admin-panel">
+          <h2><i class="fas fa-clock"></i> Recent Publishing</h2>
+          <div id="activityFeed" style="display: grid; gap: 12px;"></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/config.js"></script>
+  <script src="js/taxonomy.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/forms.js"></script>
+  <script src="js/helpers.js"></script>
+  <script src="js/preview.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
